@@ -2,10 +2,13 @@
     analysis to be executed over the Flask channel and deployed on
     localhost:5000.
 '''
-# Import Flask, render_template, request from the flask pramework package : TODO
-# Import the sentiment_analyzer function from the package created: TODO
+# Import Flask, render_template, request from the flask framework package :
+from flask import Flask, render_template, request
+# Import the sentiment_analyzer function from the package created: 
+from SentimentAnalysis.sentiment_analysis import sentiment_analyzer
 
-#Initiate the flask app : TODO
+#Initiate the flask app : 
+app = Flask("Sentiment Analyzer")
 
 @app.route("/sentimentAnalyzer")
 def sent_analyzer():
@@ -14,15 +17,28 @@ def sent_analyzer():
         function. The output returned shows the label and its confidence 
         score for the provided text.
     '''
-    # TODO
+    # send a GET request to the HTML interface to receive the input text.
+    text_to_analyze = request.args.get('textToAnalyze')
+
+    # second function, call your sentiment_analyzer application with text_to_analyze as the argument
+    # Pass the text to the sentiment_analyzer function and store the response
+    res = sentiment_analyzer(text_to_analyze)
+
+    # Extract the label and score from the response
+    label = res['label']
+    score = res['score']
+
+    # Return a formatted string with the sentiment label and score
+    return "The given text has been identified as {} with a score of {}.".format(label.split('_')[1], score)
 
 @app.route("/")
 def render_index_page():
     ''' This function initiates the rendering of the main application
         page over the Flask channel
     '''
-    #TODO
+    return render_template("index.html")
 
 if __name__ == "__main__":
     ''' This functions executes the flask app and deploys it on localhost:5000
-    '''#TODO
+    '''
+    app.run(host='0.0.0.0', port=5000)
